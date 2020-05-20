@@ -3,3 +3,5 @@ src/GradeBook/obj
 
 test/GradeBook.Tests/obj
 test/GradeBook.Tests/bin
+
+*.txt

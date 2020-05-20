@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GradeBook
 {
@@ -8,52 +7,57 @@ namespace GradeBook
         static void Main(string[] args)
         {
             // double result = 15.4;
+            Console.WriteLine("Input your name: ");
+            string nameInput = Console.ReadLine();
 
-            var student1 = new Book("Tian");
 
-            student1.addNum(12.3);
-            student1.addNum(45.6);
-            student1.addNum(78.9);
+            var student1 = new InMemoryBook(nameInput);
+            var student2 = new DiskBook(nameInput);
+            // student1.GradeAddedDelegate += notification;
+            // OnInputGrades(student1);
+            OnInputGrades(student2);
 
-            student1.notes = "Tian is a idiot!";
+            Stats stats = student2.getStats();
+            Console.WriteLine($"{student2.Name}'s highest input is: {stats.highNum}");
+            Console.WriteLine($"{student2.Name}'s lowest input is: {stats.lowNum}");
+            Console.WriteLine($"{student2.Name}'s average input is: {stats.average}");
+        }
 
-            student1.showStats();
+        static void notification(object sender, EventArgs e)
+        {
+            Console.WriteLine(sender);
+            Console.WriteLine(e);
 
-            Console.WriteLine(student1.notes);
+        } 
+        private static void OnInputGrades(Book studentGradeBook)
+        {
+            while (true)
+            {
+
+                try
+                {
+
+                    Console.WriteLine($"Please input your grade: ");
+                    var num = Console.ReadLine();
+                    if (num == "q") { break; }
+
+                    double parsed = double.Parse(num);
+                    studentGradeBook.addNum(parsed);
+
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e);
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+
             
-            student1.notes = "Tian is nice!";
-            Console.WriteLine(student1.notes);
-            Console.WriteLine("--------------------");
-            var student2 = new Book("Aaron");
-
-            student2.addNum(34.5);
-            student2.addNum(98.7);
-            student2.addNum(32.1);
-
-            student2.showStats();
-            
-            // Console.WriteLine(student1.Equals(student2));
-            // var list = new List<double>();
-
-            // list.Add(89.2);
-            // list.Add(70.2);
-            // list.Add(12.2);
-
-            // foreach(var a in list) 
-            // {
-            //     result += a;
-            // };
-
-            // Console.WriteLine($"total number: {result}");
-
-            // if(args.Length > 0)
-            // {
-            //     Console.WriteLine($"Hello {args}");
-            // } 
-            // else 
-            // {
-            //     Console.WriteLine("Hello Newcomer!");
-            // }
+                // studentGradeBook.showStats();
         }
     }
 }

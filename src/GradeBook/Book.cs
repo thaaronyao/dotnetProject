@@ -3,28 +3,72 @@ using System.Collections.Generic;
 
 namespace GradeBook 
 {
-    public class Book 
+ 
+    public delegate void firstDelegate(object sender, EventArgs args);
+    public interface Ibook
+    {
+        void addNum(double num);
+        event firstDelegate GradeAddedDelegate;
+        string Name{get; set;}
+        double highNum{get; set;}
+        double lowNum{get; set;}
+
+    }
+    public class nameObject
+    {
+        public string Name
+        {
+            get;
+            set;
+        }
+        public nameObject(string name)
+        {
+            Name = name;
+        }
+    }
+
+    public abstract class Book : nameObject, Ibook
+    {
+        public Book(string name) : base(name){}
+
+        public double highNum{get; set;}
+        public double lowNum{get; set;}
+        public abstract event firstDelegate GradeAddedDelegate; 
+        public abstract void addNum(double num);
+        public abstract Stats getStats();
+        public abstract void showStats();
+    }
+    public class InMemoryBook: Book
     {
 
-        public Book(string name) 
+        // Contructor of a class
+        // base(name) pass name to nameObject
+        public override event firstDelegate GradeAddedDelegate;
+        public InMemoryBook(string name) : base(name)
         {
             list = new List<double>();
-            this.name = name;
+            Name = name;
         }
-        private List<double> list;
-        private string name;
-        private double highNum = double.MinValue;
-        private double lowNum = double.MaxValue;
+        public List<double> list = new List<double>();
+        // public string Name;
+        // private double highNum = double.MinValue;
+        // private double lowNum = double.MaxValue;
         public string notes;
+        const string CATEGORY = "Science";
 
-        public void addNum(double num) 
+        public override void addNum(double num) 
         {
             if(num > highNum) {highNum = num;};
             if(num < lowNum) {lowNum = num;};
             list.Add(num);
+            
+            if(GradeAddedDelegate != null)
+            {
+                GradeAddedDelegate(this, new EventArgs());
+            }
         }
 
-        public void showStats()
+        public override void showStats()
         {
             double total = 0.0;
             foreach(var num in list) 
@@ -33,22 +77,21 @@ namespace GradeBook
                 
             };
 
-            Console.WriteLine($"{this.name}'s Highest: {highNum}");
-            Console.WriteLine($"{this.name}'s Lowest: {lowNum}");
-            Console.WriteLine($"{this.name}'s average num: {total/list.Count:N1}");
+            Console.WriteLine($"{Name}'s Highest: {highNum}");
+            Console.WriteLine($"{Name}'s Lowest: {lowNum}");
+            Console.WriteLine($"{Name}'s average num: {total/list.Count:N1}");
         }
-        public Stats getStats()
+        public override Stats getStats()
         {
-            var result = new Stats();
-            double total = 0.0;
+            Stats result = new Stats();
             foreach(var num in list) 
             {
-                total += num;
-                
+                if(num > result.highNum){result.highNum = num;}
+                if(num < result.lowNum){result.lowNum = num;}
+                result.sum += num;
+                result.count += 1;  
             };
-            result.highNum = highNum;
-            result.highNum = highNum;
-            result.average = total/list.Count;
+            // result.average = total/list.Count;
 
             return result;
         }
